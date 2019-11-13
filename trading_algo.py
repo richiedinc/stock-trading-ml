@@ -2,9 +2,11 @@ import numpy as np
 from keras.models import load_model
 from util import csv_to_dataset, history_points
 
-model = load_model('technical_model.h5')
+# load our newly trained model Name:basic_model.h5
+model = load_model('SNAP_tech_model.h5')
 
-ohlcv_histories, technical_indicators, next_day_open_values, unscaled_y, y_normaliser = csv_to_dataset('MSFT_daily.csv')
+# Load the csv file as we saved using the save_daya_to_csv.py
+ohlcv_histories, technical_indicators, next_day_open_values, unscaled_y, y_normaliser = csv_to_dataset('SNAP_daily.csv')
 
 test_split = 0.9
 n = int(ohlcv_histories.shape[0] * test_split)
@@ -16,10 +18,12 @@ y_train = next_day_open_values[:n]
 ohlcv_test = ohlcv_histories[n:]
 tech_ind_test = technical_indicators[n:]
 y_test = next_day_open_values[n:]
-
 unscaled_y_test = unscaled_y[n:]
 
+print('Shape',ohlcv_test.shape)
+
 y_test_predicted = model.predict([ohlcv_test, tech_ind_test])
+
 y_test_predicted = y_normaliser.inverse_transform(y_test_predicted)
 
 buys = []
@@ -41,8 +45,14 @@ for ohlcv, ind in zip(ohlcv_test[start: end], tech_ind_test[start: end]):
     elif delta < -thresh:
         sells.append((x, price_today[0][0]))
     x += 1
-print(f"buys: {len(buys)}")
-print(f"sells: {len(sells)}")
+
+# Below you can see the newer formatting style  
+# print(f"buys: {len(buys)}")
+# print(f"sells: {len(sells)}")
+
+print("buys: {}".format(len(buys)))
+print("sells: {}".format(len(sells)))
+
 
 
 def compute_earnings(buys_, sells_):
@@ -60,7 +70,7 @@ def compute_earnings(buys_, sells_):
             balance += stock * sells_[0][1]
             stock = 0
             sells_.pop(0)
-    print(f"earnings: ${balance}")
+    print("earnings: ${}".format(balance))
 
 
 # we create new lists so we dont modify the original

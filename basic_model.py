@@ -4,14 +4,17 @@ from keras.layers import Dense, Dropout, LSTM, Input, Activation
 from keras import optimizers
 import numpy as np
 np.random.seed(4)
-from tensorflow import set_random_seed
-set_random_seed(4)
+from tensorflow import random
+random.set_seed(4)
+# set_random_seed(4)
+
+
 from util import csv_to_dataset, history_points
 
 
 # dataset
-
-ohlcv_histories, _, next_day_open_values, unscaled_y, y_normaliser = csv_to_dataset('MSFT_daily.csv')
+# Default file is MSFT_daily.csv so we can change to the GOOGL_daily.csv, Now train the model
+ohlcv_histories, _, next_day_open_values, unscaled_y, y_normaliser = csv_to_dataset('AMD_daily.csv')
 
 test_split = 0.9
 n = int(ohlcv_histories.shape[0] * test_split)
@@ -41,7 +44,7 @@ output = Activation('linear', name='linear_output')(x)
 model = Model(inputs=lstm_input, outputs=output)
 adam = optimizers.Adam(lr=0.0005)
 model.compile(optimizer=adam, loss='mse')
-model.fit(x=ohlcv_train, y=y_train, batch_size=32, epochs=50, shuffle=True, validation_split=0.1)
+model.fit(x=ohlcv_train, y=y_train, batch_size=32, epochs=5, shuffle=True, validation_split=0.1)
 
 
 # evaluation
@@ -74,4 +77,4 @@ plt.legend(['Real', 'Predicted'])
 plt.show()
 
 from datetime import datetime
-model.save(f'basic_model.h5')
+model.save('basic_model_amd.h5')

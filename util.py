@@ -3,7 +3,7 @@ from sklearn import preprocessing
 import numpy as np
 
 history_points = 50
-
+# We will change the history point to predict next open value based on the history Default=50
 
 def csv_to_dataset(csv_path):
     data = pd.read_csv(csv_path)
